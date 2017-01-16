@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>报表示例</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="css/app.css" />
+		<style>
+			.chart {
+				height: 200px;
+				margin: 0px;
+				padding: 0px;
+			}
+
+			h5 {
+				margin-top: 30px;
+				font-weight: bold;
+			}
+
+			h5:first-child {
+				margin-top: 15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">报表示例</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<div class="mui-input-row" style="display: -webkit-box;width: 75%;-webkit-box-flex: 1;box-flex:1;">
+					<label style="padding-top: 13px;width: 100px;display: -webkit-box;position: relative;text-align: center;-webkit-box-orient:vertical;box-orient:vertical;">手机号</label>
+					<input id='mobile' type="text" class="mui-input-clear mui-input" pattern="^1[3|4|5|8][0-9]\d{8}$" placeholder="请输入手机号" style="line-height: 40px;display: -webkit-box;position: relative;-webkit-box-flex: 1;box-flex:1;">
+					<button id='clickme'>点击我获取验证码</button>
+				</div>
+				<h5>柱图示例</h5>
+				<div class="chart" id="barChart"></div>
+				<h5>线图示例</h5>
+				<div class="chart" id="lineChart"></div>
+                <h5>2014年江苏省开工时间饼图</h5>
+                <div class="chart" id="pieChart"></div>
+
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="libs/echarts.js"></script>
+		<script>
+
+			//ip:192.168.1.248
+			var url = 'testservlet';
+			var urlgetjs = 'getJsVehTotal';
+			var urlgetworktime = 'getworkingtime';
+			var getsmscode = 'sendsms';
+			var xProvince = [];
+			var yTotal = [];
+			var xYear = [];
+			var yTotalJs = [];
+			var piedata = [];
+			mui.init();
+			mui.plusReady(function () {
+                mui.toast("123");
+            });
+				mui('.mui-content-padded').on('tap', 'button', function() {
+				    //var a = plus.os.name;
+				    var txtMobile  = document.getElementById('mobile');
+                    var reg = new RegExp(txtMobile.getAttribute("pattern"));
+                    if (!reg.test(txtMobile.value)) {
+                        event.detail.gesture.preventDefault();
+                        mui.alert("请输入正确手机号", "手机号格式不正确！", function() {});
+                        mui.toast("手机号没输入或者不正确");
+                        mui.focus(txtMobile);
+                        return;
+                    }
+                    mui.ajax(getsmscode, {
+                        data:{mobile: txtMobile.value},
+                        dataType:'text',
+                        timeout:10000,
+                        success: function(data) {
+                            if(data == 'true')
+                                mui.alert("成功！", "短信验证码发送成功！", function() {});
+                            else
+                                mui.alert("失败！", "短信验证码发送失败！", function() {});
+
+                        },
+                        error: function(xhr, type, errorThrown) {
+                            //异常处理；
+                            mui.alert(type, "短信验证码发送失败！", function() {});
+                        }
+                    });
+
+				});
+
+					mui.ajax(url, {
+					data:{},
+					dataType:'json',
+					timeout:10000,
+					success: function(data) {
+						for(var i=0; i<data.length; i++){
+							xProvince.push(data[i].province);
+							yTotal.push(data[i].total);
+						}
+						var barChart = echarts.init(byId('barChart'));
+						barChart.setOption(getOption('bar',xProvince,yTotal,'2013年车辆保有前十'));
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						mui.alert(type, "失败！", function() {});
+					}
+				});
+
+            mui.ajax(urlgetjs, {
+                data: {},
+                dataType: 'json',
+                timeout: 10000,
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        xYear.push(data[i].year);
+                        yTotalJs.push(data[i].total);
+                    }
+                    var lineChart = echarts.init(byId('lineChart'));
+                    lineChart.setOption(getOption('line', xYear, yTotalJs, '13~16年江苏车辆保有量'));
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    mui.alert(type, "失败!", function () {
+                    });
+                }
+            });
+
+            mui.ajax(urlgetworktime, {
+                data: {},
+                dataType: 'json',
+                timeout: 10000,
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        piedata.push({"name":data[i].city,"value":data[i].workingtime});
+                    }
+                    var pieChart = echarts.init(byId('pieChart'));
+                    pieChart.setOption(getOption('pie',piedata));
+                },
+                error: function (xhr, type, errorThrown) {
+                    //异常处理；
+                    mui.alert(type, "失败!", function () {
+                    });
+                }
+            });
+
+			var getOption = function(chartType,xAxisData,seriesArr,title) {
+				var chartOption =
+					 chartType == 'pie' ? {
+											calculable: false,
+											series: [{
+												name: '访问来源',
+												type: 'pie',
+												radius: '70%',
+												center: ['50%', '60%'],
+												data: xAxisData,
+                                                itemStyle: {
+                                                    normal: {
+                                                        label: {
+                                                            show: true,
+                                                            formatter: '{b}({d}%)'
+                                                        }
+                                                    },
+                                                    labelLine: {
+                                                        show: true
+                                                    }
+                                                }
+											}]
+										} :
+					{
+						legend: {
+							data: [title]
+						},
+
+						grid: {
+							x: 35,
+							x2: 10,
+							y: 30,
+							y2: 25
+						},
+						toolbox: {
+							show: false,
+							feature: {
+								mark: {
+									show: true
+								},
+								dataView: {
+									show: true,
+									readOnly: false
+								},
+								magicType: {
+									show: true,
+									type: ['line', 'bar']
+								},
+								restore: {
+									show: true
+								},
+								saveAsImage: {
+									show: true
+								}
+							}
+						},
+						calculable: false,
+						xAxis: [{
+							type: 'category',
+							data: xAxisData
+						}],
+						yAxis: [{
+							type: 'value',
+							splitArea: {
+								show: true
+							},
+						}],
+						series: [
+							{
+								name: title,
+								type: chartType,
+								itemStyle: {
+									normal: {
+										label: {
+											show: true,
+											position: 'top'
+										},
+										color: 'rgba(72,118,255,255)'
+									}
+								},
+								data: seriesArr
+							}
+						]
+					};
+				return chartOption;
+			};
+			var byId = function(id) {
+				return document.getElementById(id);
+			};
+//			byId("echarts").addEventListener('tap', function() {
+//				var url = this.getAttribute('data-url');
+//				plus.runtime.openURL(url);
+//			}, false);
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <servlet>
+        <servlet-name>Testservlet</servlet-name>
+        <servlet-class>servlet.Testservlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetJsVehTotal</servlet-name>
+        <servlet-class>servlet.GetJsVehTotal</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetWorkingtime</servlet-name>
+        <servlet-class>servlet.GetWorkingtime</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Sendsms</servlet-name>
+        <servlet-class>servlet.Sendsms</servlet-class>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>Testservlet</servlet-name>
+        <url-pattern>/testservlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetJsVehTotal</servlet-name>
+        <url-pattern>/getJsVehTotal</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetWorkingtime</servlet-name>
+        <url-pattern>/getworkingtime</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Sendsms</servlet-name>
+        <url-pattern>/sendsms</url-pattern>
+    </servlet-mapping>
+</web-app>
