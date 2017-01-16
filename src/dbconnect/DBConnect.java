@@ -29,7 +29,7 @@ public class DBConnect {
 			conn = GetConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl = 
-					"select at_province,total from (select t.at_province,sum(t.at_total) as total from AREA_VEHICLE_TOTAL t where t.at_year = 2016 and t.at_province is not null  group by t.at_province order by total DESC) where rownum<=10";
+					"select at_province,total from (select t.at_province,sum(t.at_total) as total from AREA_VEHICLE_TOTAL t where t.at_year = 2016 and t.at_province is not null  group by t.at_province order by total) where rownum<=10";
 			rs = stmt.executeQuery(sqlvehtotsl);
 			while (rs.next()) {
 				Vehtotal veobject = new Vehtotal(rs.getString("AT_PROVINCE"),rs.getInt("total"));
