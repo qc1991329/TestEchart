@@ -29,7 +29,7 @@ public class DBConnect {
 			conn = GetConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl = 
-					"select at_province,total from (select t.at_province,sum(t.at_total) as total from AREA_VEHICLE_TOTAL t where t.at_year = 2016 and t.at_province is not null  group by t.at_province order by total DESC) where rownum<=10";
+					"select at_province,total from (select t.at_province,sum(t.at_total) as total from AREA_VEHICLE_TOTAL t where t.at_year = 2014 and t.at_province is not null  group by t.at_province order by total DESC) where rownum<=10";
 			rs = stmt.executeQuery(sqlvehtotsl);
 			while (rs.next()) {
 				Vehtotal veobject = new Vehtotal(rs.getString("AT_PROVINCE"),rs.getInt("total"));
@@ -86,7 +86,7 @@ public class DBConnect {
 			conn = GetConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl =
-					"select t.at_city ,sum(t.at_total) as worktime from AREA_WORK_TOTAL t where t.at_province ='江苏' and t.at_year = 2016 group by t.at_city having sum(t.at_total)!=0 order by worktime DESC";
+					"select t.at_city ,sum(t.at_total) as worktime from AREA_WORK_TOTAL t where t.at_province ='江苏' and t.at_year = 2014 group by t.at_city having sum(t.at_total)!=0 order by worktime DESC";
 			rs = stmt.executeQuery(sqlvehtotsl);
 			while (rs.next()) {
 				CityWorkingTime workingTime = new CityWorkingTime(rs.getString("at_city"),rs.getDouble("worktime"));
