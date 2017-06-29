@@ -24,7 +24,7 @@ public class DBConnect {
 		Statement stmt = null;
 		Connection conn = null;
 		Gson gson = new Gson();
-		ArrayList<Vehtotal> veList = new ArrayList<Vehtotal>();
+		ArrayList<Vehtotal> veList  =  new ArrayList<Vehtotal>();
 		try {
 			conn = GetConnect.getconnect();
 			stmt = conn.createStatement();

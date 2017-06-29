@@ -9,9 +9,9 @@ import java.sql.SQLException;
  */
 public  class GetConnect {
     //公司内网数据库
-    //private static  String dataurl = "jdbc:oracle:thin:@10.1.128.245:1521/xzywdb.com";
+    private static  String dataurl = "jdbc:oracle:thin:@10.1.128.245:1521/xzywdb.com";
     //天泽内网数据库
-    private static  String dataurl = "jdbc:oracle:thin:@192.168.1.50:1521/xudb";
+    //private static  String dataurl = "jdbc:oracle:thin:@192.168.1.50:1521/xudb";
     private  static  String user = "XUZHONG";
     private  static  String password = "XUZHONG";
 
