@@ -1,218 +1,81 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <title>报表示例</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <!--标准mui.css-->
-    <link rel="stylesheet" href="css/mui.min.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="css/app.css"/>
-    <style>
-        .chart {
-            height: 200px;
-            margin: 0px;
-            padding: 0px;
-        }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>报表看板</title>
+		<link rel="stylesheet" href="./css/mui.min.css">
+		<style>
+			.title {
+				background: #fff;
+				padding: 10px;
+				color: #FF3300;
+				font-size: 17px;
+			}
+			
+			.icon_new2 {
+				width: 100%;
+				height: 100%;
+				display: block;
+			}
+			
+			.icon_new2 img {
+				border-radius: 100px;
+			}
 
-        h5 {
-            margin-top: 30px;
-            font-weight: bold;
-        }
+		</style>
+	</head>
 
-        h5:first-child {
-            margin-top: 15px;
-        }
-    </style>
-</head>
+	<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">报表看板</h1>
+	</header>
+		<div class="mui-content">
+			<ul id="list" class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="index2.html" id="reportChart1">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表1</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="" id="reportChart2">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表2</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="" id="reportChart3">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表3</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="" id="reportChart4">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表4</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="" id="reportChart5">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表5</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-4" >
+					<a href="" id="reportChart6">
+						<span class="icon_new2"><img src="./img/icon_jx8.svg"/></span>
+						<div class="mui-media-body">报表6</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="./js/mui.min.js"></script>
+	<script src="./js/index.js"></script>
+	
 
-<body>
-<header class="mui-bar mui-bar-nav">
-    <h1 class="mui-title">报表示例</h1>
-</header>
-<div class="mui-content">
-    <div class="mui-content-padded">
-        <h5>柱图示例</h5>
-        <div class="chart" id="barChart"></div>
-        <h5>线图示例</h5>
-        <div class="chart" id="lineChart"></div>
-        <h5>2014年江苏省开工时间饼图</h5>
-        <div class="chart" id="pieChart"></div>
-
-    </div>
-</div>
-<script src="js/mui.min.js"></script>
-<script src="libs/echarts.js"></script>
-<script>
-
-    //ip:192.168.1.248
-    var url = 'testservlet';
-    var urlgetjs = 'getJsVehTotal';
-    var urlgetworktime = 'getworkingtime';
-    var getsmscode = 'sendsms';
-    var xProvince = [];
-    var yTotal = [];
-    var xYear = [];
-    var yTotalJs = [];
-    var piedata = [];
-    mui.init();
-    mui.plusReady(function () {
-        mui.toast("123");
-    });
-
-    mui.ajax(url, {
-        data: {},
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                xProvince.push(data[i].province);
-                yTotal.push(data[i].total);
-            }
-            var barChart = echarts.init(byId('barChart'));
-            barChart.setOption(getOption('bar', xProvince, yTotal, '2013年车辆保有前十'));
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败！", function () {
-            });
-        }
-    });
-
-    mui.ajax(urlgetjs, {
-        data: {},
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                xYear.push(data[i].year);
-                yTotalJs.push(data[i].total);
-            }
-            var lineChart = echarts.init(byId('lineChart'));
-            lineChart.setOption(getOption('line', xYear, yTotalJs, '13~16年江苏车辆保有量'));
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败!", function () {
-            });
-        }
-    });
-
-    mui.ajax(urlgetworktime, {
-        data: {},
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                piedata.push({"name": data[i].city, "value": data[i].workingtime});
-            }
-            var pieChart = echarts.init(byId('pieChart'));
-            pieChart.setOption(getOption('pie', piedata));
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败!", function () {
-            });
-        }
-    });
-
-    var getOption = function (chartType, xAxisData, seriesArr, title) {
-        var chartOption =
-            chartType == 'pie' ? {
-                calculable: false,
-                series: [{
-                    name: '访问来源',
-                    type: 'pie',
-                    radius: '70%',
-                    center: ['50%', '60%'],
-                    data: xAxisData,
-                    itemStyle: {
-                        normal: {
-                            label: {
-                                show: true,
-                                formatter: '{b}({d}%)'
-                            }
-                        },
-                        labelLine: {
-                            show: true
-                        }
-                    }
-                }]
-            } :
-                {
-                    legend: {
-                        data: [title]
-                    },
-
-                    grid: {
-                        x: 35,
-                        x2: 10,
-                        y: 30,
-                        y2: 25
-                    },
-                    toolbox: {
-                        show: false,
-                        feature: {
-                            mark: {
-                                show: true
-                            },
-                            dataView: {
-                                show: true,
-                                readOnly: false
-                            },
-                            magicType: {
-                                show: true,
-                                type: ['line', 'bar']
-                            },
-                            restore: {
-                                show: true
-                            },
-                            saveAsImage: {
-                                show: true
-                            }
-                        }
-                    },
-                    calculable: false,
-                    xAxis: [{
-                        type: 'category',
-                        data: xAxisData
-                    }],
-                    yAxis: [{
-                        type: 'value',
-                        splitArea: {
-                            show: true
-                        },
-                    }],
-                    series: [
-                        {
-                            name: title,
-                            type: chartType,
-                            itemStyle: {
-                                normal: {
-                                    label: {
-                                        show: true,
-                                        position: 'top'
-                                    },
-                                    color: 'rgba(72,118,255,255)'
-                                }
-                            },
-                            data: seriesArr
-                        }
-                    ]
-                };
-        return chartOption;
-    };
-    var byId = function (id) {
-        return document.getElementById(id);
-    };
-    //			byId("echarts").addEventListener('tap', function() {
-    //				var url = this.getAttribute('data-url');
-    //				plus.runtime.openURL(url);
-    //			}, false);
-
-</script>
-</body>
 </html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>报表看板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <style>
+        .chart {
+            height: 300px;
+            width: 100%;
+            margin: 10px;
+            padding: 20px;
+        }
+
+        h5 {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        h5:first-child {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<header class="mui-bar mui-bar-nav">
+    <h1 class="mui-title">报表看板</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-content-padded">
+        <h5>2017年车辆保有前十</h5>
+        <div class="chart" id="barChart"></div>
+        <h5>13~17年江苏车辆保有量</h5>
+        <div class="chart" id="lineChart"></div>
+        <h5>2017年江苏省开工时间饼图</h5>
+        <div class="chart" id="pieChart"></div>
+
+    </div>
+</div>
+<script src="js/mui.min.js"></script>
+<script src="libs/echarts.js"></script>
+<script>
+
+    //ip:192.168.1.248
+    var url = 'testservlet';
+    var urlgetjs = 'getJsVehTotal';
+    var urlgetworktime = 'getworkingtime';
+    var xProvince = [];
+    var yTotal = [];
+    var xYear = [];
+    var yTotalJs = [];
+    var piedata = [];
+    mui.init();
+    mui.plusReady(function () {
+        mui.toast("123");
+    });
+    var barChart = echarts.init(byId('barChart'));
+    var lineChart = echarts.init(byId('lineChart'));
+    var pieChart = echarts.init(byId('pieChart'));
+    barChart.showLoading();
+    lineChart.showLoading();
+    pieChart.showLoading();
+    mui.ajax(url, {
+        data: {},
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                xProvince.push(data[i].province);
+                yTotal.push(data[i].total);
+            }
+            barChart.hideLoading();
+            barChart.setOption(getOption('bar', xProvince, yTotal, '2017年车辆保有前十'));
+            barChart.on('click', function (params){
+                mui.toast(xProvince[params.dataIndex]+':'+params.value);
+            });
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败！", function () {
+            });
+        }
+    });
+
+    mui.ajax(urlgetjs, {
+        data: {},
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                xYear.push(data[i].year);
+                yTotalJs.push(data[i].total);
+            }
+            lineChart.hideLoading();
+            lineChart.setOption(getOption('line', xYear, yTotalJs, '13~17年江苏车辆保有量'));
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
+
+    mui.ajax(urlgetworktime, {
+        data: {},
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                piedata.push({"name": data[i].city, "value": data[i].workingtime});
+            }
+            pieChart.hideLoading();
+            pieChart.setOption(getOption('pie', piedata));
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
+
+    function getOption (chartType, xAxisData, seriesArr, title) {
+        var chartOption =
+            chartType == 'pie' ? {
+                calculable: false,
+                series: [{
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['50%', '60%'],
+                    data: xAxisData,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: '{b}({d}%)'
+                            }
+                        },
+                        labelLine: {
+                            show: true
+                        }
+                    }
+                }]
+            } :
+                {
+                    legend: {
+                        data: [title]
+                    },
+
+                    grid: {
+                        x: 55,
+                        x2: 10,
+                        y: 30,
+                        y2: 25
+                    },
+                    toolbox: {
+                        show: false,
+                        feature: {
+                            mark: {
+                                show: true
+                            },
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            magicType: {
+                                show: true,
+                                type: ['line', 'bar']
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    calculable: false,
+                    xAxis: [{
+                        type: 'category',
+                        data: xAxisData
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        splitArea: {
+                            show: true
+                        },
+                    }],
+                    series: [
+                        {
+                            name: title,
+                            type: chartType,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true,
+                                        position: 'top'
+                                    },
+                                    color: 'rgba(72,118,255,255)'
+                                }
+                            },
+                            data: seriesArr
+                        }
+                    ]
+                };
+        return chartOption;
+    };
+    function byId (id) {
+        return document.getElementById(id);
+    };
+    //			byId("echarts").addEventListener('tap', function() {
+    //				var url = this.getAttribute('data-url');
+    //				plus.runtime.openURL(url);
+    //			}, false);
+
+
+
+</script>
+</body>
+</html>
