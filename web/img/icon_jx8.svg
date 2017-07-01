@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="45px" height="45px" viewBox="0 0 45 45" enable-background="new 0 0 45 45" xml:space="preserve">
+<rect fill="#35BDEA" width="45" height="45"/>
+<g>
+	<line fill="none" stroke="#FFFFFF" stroke-width="2" stroke-miterlimit="10" x1="6.833" y1="19" x2="13.167" y2="23.834"/>
+	<line fill="none" stroke="#FFFFFF" stroke-width="2" stroke-miterlimit="10" x1="13.167" y1="23.834" x2="23.167" y2="14"/>
+	<line fill="none" stroke="#FFFFFF" stroke-width="2" stroke-miterlimit="10" x1="23.167" y1="14" x2="33" y2="18.917"/>
+	<line fill="none" stroke="#FFFFFF" stroke-width="2" stroke-miterlimit="10" x1="33" y1="18.917" x2="38.667" y2="11.833"/>
+	<circle fill="#F4E228" cx="13.167" cy="23.834" r="2.625"/>
+	<circle fill="#F4E228" cx="23.167" cy="14" r="2.625"/>
+	<circle fill="#F4E228" cx="33" cy="19" r="2.625"/>
+	<polygon fill="#F6F5F5" points="11,34.167 7.292,34.167 7.292,23.834 11,26.834 	"/>
+	<rect x="12.313" y="27.834" fill="#F6F5F5" width="3.708" height="6.333"/>
+	<polygon fill="#F6F5F5" points="21.021,34.167 17.313,34.167 17.313,26.834 21.021,23.834 	"/>
+	<polygon fill="#F6F5F5" points="26.021,34.167 22.313,34.167 22.313,22.834 26.021,18.834 	"/>
+	<polygon fill="#F6F5F5" points="30.938,34.167 27.229,34.167 27.229,18.834 30.938,21.834 	"/>
+	<rect x="32.146" y="23.834" fill="#F6F5F5" width="3.709" height="10.333"/>
+</g>
+</svg>
