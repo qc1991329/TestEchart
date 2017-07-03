@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class GetJsVehTotal extends HttpServlet {
+public class VehMonthSalServlet extends HttpServlet {
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -17,7 +17,7 @@ public class GetJsVehTotal extends HttpServlet {
 
 		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String json = new DBConnect().getJangsuVehTotal();
+		String json = new DBConnect().getVehMonthSalCount();
 		out.print(json);
 		out.flush();
 		out.close();

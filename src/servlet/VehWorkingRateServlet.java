@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 /**
  * Created by Administrator on 2016-12-13.
  */
-public class GetWorkingtime extends HttpServlet {
+public class VehWorkingRateServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request,response);
 
@@ -21,7 +21,7 @@ public class GetWorkingtime extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json; charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String json = new DBConnect().getWokingtime();
+        String json = new DBConnect().getVehWorkingRate();
         out.print(json);
         out.flush();
         out.close();

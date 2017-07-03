@@ -5,16 +5,16 @@
          version="3.1">
 
     <servlet>
-        <servlet-name>Testservlet</servlet-name>
-        <servlet-class>servlet.Testservlet</servlet-class>
+        <servlet-name>vehModelSalServlet</servlet-name>
+        <servlet-class>servlet.VehModelSalServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetJsVehTotal</servlet-name>
-        <servlet-class>servlet.GetJsVehTotal</servlet-class>
+        <servlet-name>vehMonthSalServlet</servlet-name>
+        <servlet-class>servlet.VehMonthSalServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetWorkingtime</servlet-name>
-        <servlet-class>servlet.GetWorkingtime</servlet-class>
+        <servlet-name>vehWorkingRateServlet</servlet-name>
+        <servlet-class>servlet.VehWorkingRateServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Sendsms</servlet-name>
@@ -23,16 +23,16 @@
 
 
     <servlet-mapping>
-        <servlet-name>Testservlet</servlet-name>
-        <url-pattern>/testservlet</url-pattern>
+        <servlet-name>vehModelSalServlet</servlet-name>
+        <url-pattern>/vehModelSal</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetJsVehTotal</servlet-name>
-        <url-pattern>/getJsVehTotal</url-pattern>
+        <servlet-name>vehMonthSalServlet</servlet-name>
+        <url-pattern>/vehMonthSal</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetWorkingtime</servlet-name>
-        <url-pattern>/getworkingtime</url-pattern>
+        <servlet-name>vehWorkingRateServlet</servlet-name>
+        <url-pattern>/vehWorkingRate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Sendsms</servlet-name>

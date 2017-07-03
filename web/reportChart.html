@@ -15,8 +15,6 @@
         .chart {
             height: 400px;
             width: 100%;
-            margin: 10px;
-            padding: 20px;
         }
 
         h5 {
@@ -40,7 +38,7 @@
         <div class="chart" id="barChart"></div>
         <h5>2017年单月销售量折线图</h5>
         <div class="chart" id="lineChart"></div>
-        <h5>2017年江苏省开工时间饼图</h5>
+        <h5>2017年全国设备开工率饼状图</h5>
         <div class="chart" id="pieChart"></div>
 
     </div>
@@ -50,9 +48,9 @@
 <script>
 
     //ip:192.168.1.248
-    var url = 'testservlet';
-    var urlgetjs = 'getJsVehTotal';
-    var urlgetworktime = 'getworkingtime';
+    var vehModelSalurl = 'vehModelSal';
+    var vehMonthSalurl = 'vehMonthSal';
+    var vehWorkingRateurl = 'vehWorkingRate';
     var yModel = [];
     var xSalCount = [];
     var xMonth = [];
@@ -67,7 +65,9 @@
     barChart.showLoading();
     lineChart.showLoading();
     pieChart.showLoading();
-    mui.ajax(url, {
+
+    //车辆类型销售报表
+    mui.ajax(vehModelSalurl, {
         data: {},
         dataType: 'json',
         timeout: 10000,
@@ -127,7 +127,8 @@
         }
     });
 
-    mui.ajax(urlgetjs, {
+    //月度销售量报表
+    mui.ajax(vehMonthSalurl, {
         data: {},
         dataType: 'json',
         timeout: 10000,
@@ -137,7 +138,7 @@
                 yMSalCount.push(data[i].salCount);
             }
             lineChart.hideLoading();
-            lineChart.setOption(getOption('line', xMonth, yMSalCount, '17年单月销售量'));
+            lineChart.setOption(getOption('line', xMonth, yMSalCount, '2017年单月销售量'));
         },
         error: function (xhr, type, errorThrown) {
             //异常处理；
@@ -146,13 +147,13 @@
         }
     });
 
-    mui.ajax(urlgetworktime, {
+    mui.ajax(vehWorkingRateurl, {
         data: {},
         dataType: 'json',
-        timeout: 10000,
+        timeout: 40000,
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
-                piedata.push({"name": data[i].city, "value": data[i].workingtime});
+                piedata.push({"name": data[i].province, "value": data[i].workingRate});
             }
             pieChart.hideLoading();
             pieChart.setOption(getOption('pie', piedata));
@@ -167,12 +168,12 @@
     function getOption (chartType, xAxisData, seriesArr, title) {
         var chartOption =
             chartType == 'pie' ? {
-                calculable: false,
+                calculable: true,
                 series: [{
                     name: '访问来源',
                     type: 'pie',
-                    radius: '70%',
-                    center: ['50%', '60%'],
+                    radius: '50%',
+                    center: ['50%', '50%'],
                     data: xAxisData,
                     itemStyle: {
                         normal: {
@@ -249,17 +250,10 @@
                     ]
                 };
         return chartOption;
-    };
+    }
     function byId (id) {
         return document.getElementById(id);
-    };
-    //			byId("echarts").addEventListener('tap', function() {
-    //				var url = this.getAttribute('data-url');
-    //				plus.runtime.openURL(url);
-    //			}, false);
-
-
-
+    }
 </script>
 </body>
 </html>
