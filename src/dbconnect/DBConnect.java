@@ -179,6 +179,10 @@ public class DBConnect {
 		Statement stmt = null;
 		Connection conn = null;
 		Gson gson = new Gson();
+		Calendar calendar=Calendar.getInstance();
+		//获得当前时间的月份，月份从0开始所以结果要加1
+		int month=calendar.get(Calendar.MONTH)+1;
+		String strMonth = month>=10?month+"":"0"+month;
 		ArrayList<VehWorkingRate> jsArrayList = new ArrayList<VehWorkingRate>();
 		try {
 			conn = GetConnect.getconnect();
@@ -188,7 +192,7 @@ public class DBConnect {
 							" (SELECT OOD_PROVINCE AS REGION,\n" +
 							"         ONOFF.VI_ID,\n" +
 							"         SUM(OOD_WORKHOURS) AS TOTALWORKHOURS\n" +
-							"    FROM ON_OFF_DAY201706 ONOFF\n" +
+							"    FROM ON_OFF_DAY2017"+strMonth+" ONOFF\n" +
 							"   WHERE 1=1\n" +
 							"     AND OOD_PROVINCE IS NOT NULL\n" +
 							"     AND VI_OWN_TYPE = 3\n" +
@@ -207,6 +211,7 @@ public class DBConnect {
 							"            FROM TERMINAL_MODEL_INFO\n" +
 							"           WHERE TERMINAL_MODEL_INFO.TMM_IS_RELAY = 0)\n" +
 							"          AND VEHICLE.VI_SALE_TIME is not null\n" +
+							"          AND VEHICLE.Vi_Own_Type = 3\n" +
 							"   GROUP BY REGION,VEHICLE.VI_TONNAGE_TYPE, VEHICLE.VI_ID)\n" +
 							"  select PR_NAME,totalWorkHours,VEHICLECOUNT,trunc(rate,2) as rate from (SELECT PR_NAME,\n" +
 							"       MAX(PR_CODE) PR_CODE,\n" +

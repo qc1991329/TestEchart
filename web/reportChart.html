@@ -29,16 +29,13 @@
 </head>
 
 <body>
-<header class="mui-bar mui-bar-nav">
-    <h1 class="mui-title">报表看板</h1>
-</header>
 <div class="mui-content">
     <div class="mui-content-padded">
-        <h5>2017年销售型号前十</h5>
+        <h5>2017年型号销售前十</h5>
         <div class="chart" id="barChart"></div>
         <h5>2017年单月销售量折线图</h5>
         <div class="chart" id="lineChart"></div>
-        <h5>2017年全国设备开工率饼状图</h5>
+        <h5 id="pie"></h5>
         <div class="chart" id="pieChart"></div>
 
     </div>
@@ -51,6 +48,11 @@
     var vehModelSalurl = 'vehModelSal';
     var vehMonthSalurl = 'vehMonthSal';
     var vehWorkingRateurl = 'vehWorkingRate';
+    //获取当前月份
+    var date=new Date;
+    var month = date.getMonth()+1;
+    document.getElementById("pie").innerHTML = "2017年"+month+"月全国销售设备开工率饼状图"
+
     var yModel = [];
     var xSalCount = [];
     var xMonth = [];
@@ -170,7 +172,6 @@
             chartType == 'pie' ? {
                 calculable: true,
                 series: [{
-                    name: '访问来源',
                     type: 'pie',
                     radius: '50%',
                     center: ['50%', '50%'],
