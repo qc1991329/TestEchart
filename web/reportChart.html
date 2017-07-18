@@ -31,42 +31,55 @@
 <body>
 <div class="mui-content">
     <div class="mui-content-padded">
-        <h5>2017年型号销售前十</h5>
+        <h5>2017年型号销量前十</h5>
         <div class="chart" id="barChart"></div>
         <h5>2017年单月销售量折线图</h5>
         <div class="chart" id="lineChart"></div>
         <h5 id="pie"></h5>
         <div class="chart" id="pieChart"></div>
-
+        <h5>2017年型号超载情况柱状图</h5>
+        <div class="chart" id="doublelineChart"></div>
     </div>
 </div>
 <script src="js/mui.min.js"></script>
 <script src="libs/echarts.js"></script>
 <script>
-
     //ip:192.168.1.248
     var vehModelSalurl = 'vehModelSal';
     var vehMonthSalurl = 'vehMonthSal';
     var vehWorkingRateurl = 'vehWorkingRate';
+    var vehModelOverloadurl = 'vehModelOverload';
     //获取当前月份
     var date=new Date;
     var month = date.getMonth()+1;
     document.getElementById("pie").innerHTML = "2017年"+month+"月全国销售设备开工率饼状图"
 
+    //型号销量柱状图数据
     var yModel = [];
     var xSalCount = [];
+    //单月销量折线图数据
     var xMonth = [];
     var yMSalCount = [];
+    //开工率比率饼图数据
     var piedata = [];
+    //型号超载柱状图数据
+    var yOverloadModel = [];
+    var xOverloadHours = [];
+    var xOverloadcount = [];
+
+
     mui.init();
     mui.plusReady(function () {
     });
+
     var barChart = echarts.init(byId('barChart'));
     var lineChart = echarts.init(byId('lineChart'));
     var pieChart = echarts.init(byId('pieChart'));
+    var doublelineChart = echarts.init(byId('doublelineChart'));
     barChart.showLoading();
     lineChart.showLoading();
     pieChart.showLoading();
+    doublelineChart.showLoading();
 
     //车辆类型销售报表
     mui.ajax(vehModelSalurl, {
@@ -80,6 +93,7 @@
             }
             barChart.hideLoading();
             barChart.setOption({
+                calculable: true,
                 legend: {
                     data:['2017年销售量']
                 },
@@ -149,10 +163,11 @@
         }
     });
 
+    //开工率饼图
     mui.ajax(vehWorkingRateurl, {
         data: {},
         dataType: 'json',
-        timeout: 40000,
+        timeout: 50000,
         success: function (data) {
             for (var i = 0; i < data.length; i++) {
                 piedata.push({"name": data[i].province, "value": data[i].workingRate});
@@ -163,6 +178,81 @@
         error: function (xhr, type, errorThrown) {
             //异常处理；
             mui.alert(type, "失败!", function () {
+
+            });
+        }
+    });
+
+    //超载型号柱状图
+    mui.ajax(vehModelOverloadurl, {
+        data: {},
+        dataType: 'json',
+        timeout: 50000,
+        success: function (data) {
+            for (var i = data.length-1; i >=0 ; i--) {
+                yOverloadModel.push(data[i].modelName);
+                xOverloadHours.push(data[i].hours);
+                xOverloadcount.push(data[i].vehCount);
+            }
+            doublelineChart.hideLoading();
+            doublelineChart.setOption({
+                calculable: true,
+                legend: {
+                    data:['超载车辆数', '总超载小时']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'category',
+                        axisTick : {show: false},
+                        data : yOverloadModel
+                    }
+                ],
+                series : [
+                    {
+                        name:'超载车辆数',
+                        type:'bar',
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'right'
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: 'rgba(72,118,255,255)'
+                            }
+                        },
+                        data:xOverloadcount
+                    },
+                    {
+                        name:'总超载小时',
+                        type:'bar',
+                        stack: '总量',
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'right'
+                            }
+                        },
+                        data:xOverloadHours
+                    }
+                ]
+            });
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败！", function () {
             });
         }
     });
@@ -222,7 +312,7 @@
                             }
                         }
                     },
-                    calculable: false,
+                    calculable: true,
                     xAxis: [{
                         type: 'category',
                         data: xAxisData
@@ -252,6 +342,7 @@
                 };
         return chartOption;
     }
+
     function byId (id) {
         return document.getElementById(id);
     }

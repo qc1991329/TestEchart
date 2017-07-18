@@ -1,5 +1,6 @@
 package dbconnect;
 
+import bean.VehModelOverload;
 import bean.VehWorkingRate;
 import bean.MonthSalCount;
 import bean.VehModelCount;
@@ -172,7 +173,6 @@ public class DBConnect {
 		} finally {
 			closeconnect(rs,stmt,conn);
 		}
-
 	}
 	public String getVehWorkingRate(){
 		ResultSet rs = null;
@@ -239,7 +239,42 @@ public class DBConnect {
 		} finally {
 			closeconnect(rs,stmt,conn);
 		}
+	}
 
+	public String getVehModelOverload(){
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn = null;
+		Gson gson = new Gson();
+		ArrayList<VehModelOverload> jsArrayList = new ArrayList<VehModelOverload>();
+		try {
+			conn = GetConnect.getconnect();
+			stmt = conn.createStatement();
+			String sql ="select * from \n" +
+					"(select m.vmi_name,trunc(sum(p.woa_hours),2) totalhours ,count(distinct p.woa_vin_code) vehcount \n" +
+					"from WORK_OVERLOAD_2017 p , vehicle_model_info m \n" +
+					"where p.woa_id in \n" +
+					"(select max(t.woa_id) from WORK_OVERLOAD_2017 t where t.woa_hours>0 and t.woa_own_type = 3 \n" +
+					"group by t.woa_vin_code , t.woa_work_date)\n" +
+					"and p.woa_model = m.vmi_id\n" +
+					"group by p.woa_model,m.vmi_name\n" +
+					"order by sum(p.woa_hours) DESC)\n" +
+					"where rownum <= 10";
+
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				VehModelOverload object = new VehModelOverload(rs.getString("vmi_name"),rs.getDouble("totalhours"),rs.getInt("vehcount"));
+				jsArrayList.add(object);
+
+			}
+			String jsonstring = gson.toJson(jsArrayList);
+			return jsonstring;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			closeconnect(rs,stmt,conn);
+		}
 	}
 
 	//阿里大于短信验证接口
@@ -290,7 +325,7 @@ public class DBConnect {
 	}
 	
 	public static void main(String[] args) {
-//		String str = new DBConnect().getVehtotal();
+//		String str = new DBConnect().getVehModelOverload();
 //		System.out.println(str);
 		/*boolean issuccess = false;
 		try {
