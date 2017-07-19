@@ -1,5 +1,6 @@
 package dbconnect;
 
+import Util.Util;
 import bean.VehModelOverload;
 import bean.VehWorkingRate;
 import bean.MonthSalCount;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DBConnect {
 
@@ -277,6 +279,56 @@ public class DBConnect {
 		}
 	}
 
+	public String getVehQualityControl(){
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn = null;
+		int count = 0;
+		String date = Util.dateToStr(new Date());
+		try {
+			conn = GetConnect.getconnect();
+			stmt = conn.createStatement();
+			String sql ="select count(*) coun from VEHICLE_QC_INFO t where t.vqi_time > to_date('" + date + "','yyyy-mm-dd')";
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count = rs.getInt("coun");
+
+			}
+			String str = count+"";
+			return str;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			closeconnect(rs,stmt,conn);
+		}
+	}
+
+	public String getStoreStock(){
+		ResultSet rs = null;
+		Statement stmt = null;
+		Connection conn = null;
+		int count = 0;
+		String date = Util.dateToStr(new Date());
+		try {
+			conn = GetConnect.getconnect();
+			stmt = conn.createStatement();
+			String sql ="select count(*) coun from CP_STORE_STOCK t where  t.in_date > to_date('" + date + "','yyyy-mm-dd')";
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count = rs.getInt("coun");
+
+			}
+			String str = count+"";
+			return str;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			closeconnect(rs,stmt,conn);
+		}
+	}
+
 	//阿里大于短信验证接口
 	public boolean sendsms(String mobile){
 		Calendar c = Calendar.getInstance();
@@ -325,7 +377,7 @@ public class DBConnect {
 	}
 	
 	public static void main(String[] args) {
-//		String str = new DBConnect().getVehModelOverload();
+//		String str = new DBConnect().getStoreStock();
 //		System.out.println(str);
 		/*boolean issuccess = false;
 		try {

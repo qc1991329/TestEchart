@@ -31,6 +31,8 @@
 <body>
 <div class="mui-content">
     <div class="mui-content-padded">
+        <h5 id="qc" style="color:red;">今日目前已质检通过车辆：</h5>
+        <h5 id="ss" style="color:red;">今日已入库车辆：</h5>
         <h5>2017年型号销量前十</h5>
         <div class="chart" id="barChart"></div>
         <h5>2017年单月销售量折线图</h5>
@@ -49,6 +51,7 @@
     var vehMonthSalurl = 'vehMonthSal';
     var vehWorkingRateurl = 'vehWorkingRate';
     var vehModelOverloadurl = 'vehModelOverload';
+    var vehQualityControlurl = 'vehQualityControl';
     //获取当前月份
     var date=new Date;
     var month = date.getMonth()+1;
@@ -67,7 +70,6 @@
     var xOverloadHours = [];
     var xOverloadcount = [];
 
-
     mui.init();
     mui.plusReady(function () {
     });
@@ -76,10 +78,30 @@
     var lineChart = echarts.init(byId('lineChart'));
     var pieChart = echarts.init(byId('pieChart'));
     var doublelineChart = echarts.init(byId('doublelineChart'));
+    var qc = byId('qc');
+    var ss = byId('ss');
+
     barChart.showLoading();
     lineChart.showLoading();
     pieChart.showLoading();
     doublelineChart.showLoading();
+
+
+    //当日质检通过车辆
+    mui.ajax(vehQualityControlurl, {
+        data: {},
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            qc.innerHTML = '今日目前已质检通过车辆：'+data[0].strqc;
+            ss.innerHTML = '今日已入库车辆：'+data[0].strss;
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
 
     //车辆类型销售报表
     mui.ajax(vehModelSalurl, {

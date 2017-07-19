@@ -25,6 +25,10 @@
         <servlet-class>servlet.VehModelOverloadServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>vehQualityControlServlet</servlet-name>
+        <servlet-class>servlet.VehQualityControlServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Sendsms</servlet-name>
         <servlet-class>servlet.Sendsms</servlet-class>
     </servlet>
@@ -45,6 +49,10 @@
     <servlet-mapping>
         <servlet-name>vehModelOverloadServlet</servlet-name>
         <url-pattern>/vehModelOverload</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>vehQualityControlServlet</servlet-name>
+        <url-pattern>/vehQualityControl</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Sendsms</servlet-name>
