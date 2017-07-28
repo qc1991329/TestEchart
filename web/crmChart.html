@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>发车看板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <style>
+        .chart {
+            height: 400px;
+            width: 100%;
+        }
+
+        h5 {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        h5:first-child {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="mui-content">
+    <div class="mui-content-padded">
+        <h5 id="dayshipout" style="color:red;"></h5>
+        <h5 id="modeldayshipout"></h5>
+        <div class="chart" id="barChart"></div>
+        <h5 id="monthdayshipout"></h5>
+        <div class="chart" id="monthlineChart"></div>
+        <h5 id="yearmonthshipout"></h5>
+        <div class="chart" id="yearlineChart"></div>
+    </div>
+</div>
+<script src="js/mui.min.js"></script>
+<script src="libs/echarts.js"></script>
+<script>
+    var dayShipOuturl = 'dayShipOut';
+    var vehModelSalurl = 'vehModelSal';
+    var vehMonthSalurl = 'vehMonthSal';
+    var yearmonthShipOuturl = 'yearMonthShipOut';
+    //获取当前月份
+    var date=new Date;
+    var year = date.getFullYear();
+    var month = date.getMonth()+1;
+    var datestring = getdatestring(date);
+    document.getElementById("dayshipout").innerHTML = datestring+"已发车："
+    document.getElementById("modeldayshipout").innerHTML = datestring+"发车型号统计："
+    document.getElementById("monthdayshipout").innerHTML =year+"年"+month+"月"+"每日发车量折线图："
+    document.getElementById("yearmonthshipout").innerHTML =year+"年每月发车量折线图："
+
+    //当日发车型号数据
+    var yModel = [];
+    var xSalCount = [];
+    //当月每日发车数据
+    var xDay = [];
+    var yDSalCount = [];
+    //当年每月发车数据
+    var xMonth = [];
+    var yMSalCount = [];
+
+    mui.init();
+    mui.plusReady(function () {
+    });
+
+    var barChart = echarts.init(byId('barChart'));
+    var monthlineChart = echarts.init(byId('monthlineChart'));
+    var yearlineChart = echarts.init(byId('yearlineChart'));
+    var dayshipout = byId('dayshipout');
+
+    barChart.showLoading();
+    monthlineChart.showLoading();
+    yearlineChart.showLoading();
+
+
+    //当日发车量
+    mui.ajax(dayShipOuturl, {
+        data: {
+            vehgo : 'out'
+        },
+        dataType: 'text',
+        timeout: 10000,
+        success: function (data) {
+            var old = dayshipout.innerHTML;
+            dayshipout.innerHTML = old+data;
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
+
+    //当日发车型号柱状图
+    mui.ajax(vehModelSalurl, {
+        data: {
+            vehgo : 'out'
+        },
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = data.length-1; i >=0 ; i--) {
+                yModel.push(data[i].modelName);
+                xSalCount.push(data[i].salCount);
+            }
+            barChart.hideLoading();
+            barChart.setOption({
+                calculable: true,
+                legend: {
+                    data:['今日型号发车量']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'category',
+                        axisTick : {show: false},
+                        data : yModel
+                    }
+                ],
+                series : [
+                    {
+                        name: '今日型号发车量',
+                        type: 'bar',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                color: 'rgba(72,118,255,255)'
+                            }
+                        },
+                        data: xSalCount
+                    }
+                ]
+            });
+            /*barChart.on('click', function (params){
+                mui.toast(xProvince[params.dataIndex]+':'+params.value);
+            });*/
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败！", function () {
+            });
+        }
+    });
+
+    //当月每日发车折线图
+    mui.ajax(vehMonthSalurl, {
+        data: {
+            vehgo : 'out'
+        },
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                xDay.push(data[i].month);
+                yDSalCount.push(data[i].salCount);
+            }
+            monthlineChart.hideLoading();
+            monthlineChart.setOption(getOption('line', xDay, yDSalCount, '每日发车量'));
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
+
+    //当年每月发车折线图
+    mui.ajax(yearmonthShipOuturl, {
+        data: {
+            vehgo : 'out'
+        },
+        dataType: 'json',
+        timeout: 10000,
+        success: function (data) {
+            for (var i = 0; i < data.length; i++) {
+                xMonth.push(data[i].month);
+                yMSalCount.push(data[i].salCount);
+            }
+            yearlineChart.hideLoading();
+            yearlineChart.setOption(getOption('line', xMonth, yMSalCount, '每月发车量'));
+        },
+        error: function (xhr, type, errorThrown) {
+            //异常处理；
+            mui.alert(type, "失败!", function () {
+            });
+        }
+    });
+
+
+    function getOption (chartType, xAxisData, seriesArr, title) {
+        var chartOption =
+            chartType == 'pie' ? {
+                calculable: true,
+                series: [{
+                    type: 'pie',
+                    radius: '50%',
+                    center: ['50%', '50%'],
+                    data: xAxisData,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: '{b}({d}%)'
+                            }
+                        },
+                        labelLine: {
+                            show: true
+                        }
+                    }
+                }]
+            } :
+                {
+                    legend: {
+                        data: [title]
+                    },
+
+                    grid: {
+                        x: 55,
+                        x2: 10,
+                        y: 30,
+                        y2: 25
+                    },
+                    toolbox: {
+                        show: false,
+                        feature: {
+                            mark: {
+                                show: true
+                            },
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            magicType: {
+                                show: true,
+                                type: ['line', 'bar']
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [{
+                        type: 'category',
+                        data: xAxisData
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        splitArea: {
+                            show: true
+                        },
+                    }],
+                    series: [
+                        {
+                            name: title,
+                            type: chartType,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true,
+                                        position: 'top'
+                                    },
+                                    color: 'rgba(72,118,255,255)'
+                                }
+                            },
+                            data: seriesArr
+                        }
+                    ]
+                };
+        return chartOption;
+    }
+
+    function byId (id) {
+        return document.getElementById(id);
+    }
+    
+    function getdatestring (date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        return y+'年'+m+'月'+d+'日';
+    }
+</script>
+</body>
+</html>
