@@ -5,7 +5,7 @@
          version="3.1">
 
     <welcome-file-list>
-        <welcome-file>reportChart.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
     <servlet>
@@ -32,6 +32,14 @@
         <servlet-name>Sendsms</servlet-name>
         <servlet-class>servlet.Sendsms</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>dayShipOutServlet</servlet-name>
+        <servlet-class>servlet.crm.DayShipOutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>yearMonthShipOutServlet</servlet-name>
+        <servlet-class>servlet.crm.YearMonthShipOutServlet</servlet-class>
+    </servlet>
 
 
     <servlet-mapping>
@@ -57,5 +65,13 @@
     <servlet-mapping>
         <servlet-name>Sendsms</servlet-name>
         <url-pattern>/sendsms</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>dayShipOutServlet</servlet-name>
+        <url-pattern>/dayShipOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>yearMonthShipOutServlet</servlet-name>
+        <url-pattern>/yearMonthShipOut</url-pattern>
     </servlet-mapping>
 </web-app>

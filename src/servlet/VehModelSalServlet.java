@@ -1,6 +1,6 @@
 package servlet;
 
-import dbconnect.DBConnect;
+import crm.GetCrmData;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,10 +24,10 @@ public class VehModelSalServlet extends HttpServlet {
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-			response.setContentType("application/json; charset=UTF-8");
+		String vehgo = request.getParameter("vehgo");
+		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String json = new DBConnect().getVehModelSalCount();
+		String json = new GetCrmData().getVehModelSalCount(vehgo);
 		out.print(json);
 		out.flush();
 		out.close();
