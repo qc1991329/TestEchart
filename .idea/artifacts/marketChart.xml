@@ -1,0 +1,26 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="marketChart">
+    <output-path>E:/Tomcat 8.5</output-path>
+    <root id="archive" name="marketChart.war">
+      <element id="javaee-facet-resources" facet="TestEchart/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="TestEchart" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/taobao-sdk-java-auto_1455552377940-20160607.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/ojdbc6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/gson-2.3.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/commons-logging.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/gson-2.3.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/ojdbc6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/taobao-sdk-java-auto_1455552377940-20160607.jar" />
+          <element id="library" level="project" name="sqljdbc4" />
+          <element id="file-copy" path="$PROJECT_DIR$/../../json-lib-2.4-jdk15.jar" />
+        </element>
+        <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+    </root>
+  </artifact>
+</component>
