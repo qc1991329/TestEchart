@@ -40,6 +40,13 @@
         <servlet-name>yearMonthShipOutServlet</servlet-name>
         <servlet-class>servlet.crm.YearMonthShipOutServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>crmPaymentServlet</servlet-name>
+        <servlet-class>servlet.crm.CrmPaymentServlet</servlet-class>
+    </servlet>
+
+
+
 
 
     <servlet-mapping>
@@ -73,5 +80,9 @@
     <servlet-mapping>
         <servlet-name>yearMonthShipOutServlet</servlet-name>
         <url-pattern>/yearMonthShipOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>crmPaymentServlet</servlet-name>
+        <url-pattern>/crmpayment</url-pattern>
     </servlet-mapping>
 </web-app>
