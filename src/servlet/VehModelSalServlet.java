@@ -25,9 +25,10 @@ public class VehModelSalServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String vehgo = request.getParameter("vehgo");
+		String date = request.getParameter("date");
 		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String json = new GetCrmData().getVehModelSalCount(vehgo);
+		String json = new GetCrmData().getVehModelSalCount(vehgo,date);
 		out.print(json);
 		out.flush();
 		out.close();

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class GetCrmPaymentData {
 
 	//昨日回款额
-	public String getCrmPayment() {
+	public String getCrmPayment(String date) {
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -23,8 +23,10 @@ public class GetCrmPaymentData {
 			conn = CRMConnect.getconnect();
 			stmt = conn.createStatement();
 				sql ="select Convert(decimal(18,2),sum(new_amount)/10000) as coun from new_ord_billing t \n" +
-						"where datediff(dd,t.new_billingdate,getDate())=1 and t.new_approvalstatus='3'\n" +
-						"and t.new_status='4'  and  t.new_bill_confirmcode is not null and t.new_organizationid ='819C5898-9051-E511-95A0-288023ADD5FB'";
+						"where datediff(dd,t.new_billingdate,'"+
+						date+
+						"')=0 and t.new_approvalstatus='3'\n" +
+						"and t.new_status='4' and  t.new_bill_confirmcode is not null and t.new_organizationidname ='徐工重型'";
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				coun = rs.getDouble("coun");
@@ -39,48 +41,9 @@ public class GetCrmPaymentData {
 		}
 	}
 
-	//当日型号发车量统计
-	/*public String getVehModelSalCount(String vehgo) {
-		ResultSet rs = null;
-		Statement stmt = null;
-		Connection conn = null;
-		String sql = "";
-		Gson gson = new Gson();
-		ArrayList<VehModelCount> veList  =  new ArrayList<VehModelCount>();
-		try {
-			conn = CRMConnect.getconnect();
-			stmt = conn.createStatement();
-			if(vehgo.equals("out")){
-				sql ="select\tt.new_vinmodelidname,count(*) coun\n" +
-						"from\tnew_vin_shipout t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(dd,t.new_outtime,getdate())=0 and pm.new_category=1\n" +
-						"group by t.new_vinmodelid,t.new_vinmodelidname\n" +
-						"order by coun DESC";
-			}else{
-				sql ="select\tt.new_vinmodelidname,count(*) coun\n" +
-						"from\tnew_vin_shipin t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(dd,t.new_entrytime,getdate())=0 and pm.new_category=1\n" +
-						"group by t.new_vinmodelid,t.new_vinmodelidname\n" +
-						"order by coun DESC";
-			}
-
-			rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				VehModelCount veobject = new VehModelCount(rs.getString("new_vinmodelidname"),rs.getInt("coun"));
-				veList.add(veobject);
-			}
-			String jsonstring = gson.toJson(veList);
-			return jsonstring;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			closeconnect(rs,stmt,conn);
-		}
-	}*/
 
 	//当月每日回款额折线图
-	public String getCrmMonthPayment(){
+	public String getCrmMonthPayment(String date){
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -91,8 +54,10 @@ public class GetCrmPaymentData {
 			conn = CRMConnect.getconnect();
 			stmt = conn.createStatement();
 				sql ="select DATEPART(dd, new_billingdate) as dd,Convert(decimal(18,2),sum(new_amount)/10000) as coun from new_ord_billing t \n" +
-						"where datediff(mm,t.new_billingdate,getDate())=1 and t.new_approvalstatus='3'\n" +
-						"and t.new_status='4'  and  t.new_bill_confirmcode is not null and t.new_organizationid ='819C5898-9051-E511-95A0-288023ADD5FB'\n" +
+						"where datediff(mm,t.new_billingdate,'"+
+						date+
+						"')=0 and t.new_approvalstatus='3'\n" +
+						"and t.new_status='4'  and  t.new_bill_confirmcode is not null and t.new_organizationidname ='徐工重型'\n" +
 						"group by DATEPART(dd, new_billingdate)\n" +
 						"order by dd";
 			rs = stmt.executeQuery(sql);
@@ -112,7 +77,7 @@ public class GetCrmPaymentData {
 
 
 	//当年每月回款额线图
-	public String getCrmYearPayment(){
+	public String getCrmYearPayment(String date){
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -124,8 +89,10 @@ public class GetCrmPaymentData {
 			stmt = conn.createStatement();
 			sql ="select DATEPART(mm, new_billingdate) as mm,Convert(decimal(18,2),sum(new_amount)/10000) as coun\n" +
 					"from new_ord_billing t \n" +
-					"where datediff(yy,t.new_billingdate,getDate())=0 and t.new_approvalstatus='3'\n" +
-					"and t.new_status='4'  and  t.new_bill_confirmcode is not null and t.new_organizationid ='819C5898-9051-E511-95A0-288023ADD5FB'\n" +
+					"where datediff(yy,t.new_billingdate,'"+
+					date+
+					"')=0 and t.new_approvalstatus='3'\n" +
+					"and t.new_status='4'  and  t.new_bill_confirmcode is not null and t.new_organizationidname ='徐工重型'\n" +
 					"group by DATEPART(mm, new_billingdate)\n" +
 					"order by DATEPART(mm, new_billingdate)";
 			rs = stmt.executeQuery(sql);

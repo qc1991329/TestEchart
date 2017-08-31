@@ -22,11 +22,12 @@ public class CrmPaymentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String payment = request.getParameter("payment");
+        String date = request.getParameter("date");
         if(payment.equals("day")){
             String str = null;
             PrintWriter out = response.getWriter();
             response.setContentType("text/plain; charset=UTF-8");
-            str = new GetCrmPaymentData().getCrmPayment();
+            str = new GetCrmPaymentData().getCrmPayment(date);
             out.print(str);
             out.flush();
             out.close();
@@ -34,7 +35,7 @@ public class CrmPaymentServlet extends HttpServlet {
             String str = null;
             PrintWriter out = response.getWriter();
             response.setContentType("application/json; charset=UTF-8");
-            str = new GetCrmPaymentData().getCrmMonthPayment();
+            str = new GetCrmPaymentData().getCrmMonthPayment(date);
             out.print(str);
             out.flush();
             out.close();
@@ -42,7 +43,7 @@ public class CrmPaymentServlet extends HttpServlet {
             String str = null;
             PrintWriter out = response.getWriter();
             response.setContentType("application/json; charset=UTF-8");
-            str = new GetCrmPaymentData().getCrmYearPayment();
+            str = new GetCrmPaymentData().getCrmYearPayment(date);
             out.print(str);
             out.flush();
             out.close();

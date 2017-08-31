@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class GetCrmData {
 
 	//当日发车量
-	public String getCrmShipout( String vehgo) {
+	public String getCrmShipout( String vehgo , String date) {
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -26,11 +26,15 @@ public class GetCrmData {
 			if(vehgo.equals("out")){
 				sql ="select count(*) as coun \n" +
 						"from new_vin_shipout t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where t.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(dd,t.new_outtime,getdate())=0 and pm.new_category=1";
+						"where t.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(dd,t.new_outtime,'" +
+						date +
+						"')=0 and pm.new_category=1";
 			}else{
 				sql ="select count(*) as coun \n" +
 						"from new_vin_shipin t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where t.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(dd,t.new_entrytime,getdate())=0 and pm.new_category=1";
+						"where t.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(dd,t.new_entrytime,'"+
+						date+
+						"')=0 and pm.new_category=1";
 			}
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -47,7 +51,7 @@ public class GetCrmData {
 	}
 
 	//当日型号发车量统计
-	public String getVehModelSalCount(String vehgo) {
+	public String getVehModelSalCount(String vehgo , String date) {
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -60,13 +64,17 @@ public class GetCrmData {
 			if(vehgo.equals("out")){
 				sql ="select\tt.new_vinmodelidname,count(*) coun\n" +
 						"from\tnew_vin_shipout t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(dd,t.new_outtime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(dd,t.new_outtime,'" +
+						date +
+						"')=0 and pm.new_category=1\n" +
 						"group by t.new_vinmodelid,t.new_vinmodelidname\n" +
 						"order by coun DESC";
 			}else{
 				sql ="select\tt.new_vinmodelidname,count(*) coun\n" +
 						"from\tnew_vin_shipin t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(dd,t.new_entrytime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(dd,t.new_entrytime,'"+
+						date+
+						"')=0 and pm.new_category=1\n" +
 						"group by t.new_vinmodelid,t.new_vinmodelidname\n" +
 						"order by coun DESC";
 			}
@@ -87,7 +95,7 @@ public class GetCrmData {
 	}
 
 	//当月每日发车量折线图
-	public String getVehMonthSalCount(String vehgo){
+	public String getVehMonthSalCount(String vehgo , String date){
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -100,19 +108,23 @@ public class GetCrmData {
 			if(vehgo.equals("out")){
 				sql ="select\tDATEPART(dd, t.new_outtime) as dd , count(*) as mfache\n" +
 						"from\tnew_vin_shipout t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(mm,t.new_outtime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(mm,t.new_outtime,'" +
+						date +
+						"')=0 and pm.new_category=1\n" +
 						"group by DATEPART(dd, t.new_outtime)\n" +
 						"order by dd";
 			}else{
 				sql ="select\tDATEPART(dd, t.new_entrytime) as dd , count(*) as mfache\n" +
 						"from\tnew_vin_shipin t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(mm,t.new_entrytime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(mm,t.new_entrytime,'"+
+						date+
+						"')=0 and pm.new_category=1\n" +
 						"group by DATEPART(dd, t.new_entrytime)\n" +
 						"order by dd";
 			}
 			rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				MonthSalCount monthSalobject = new MonthSalCount(rs.getInt("dd")+"日",rs.getInt("mfache"));
+				MonthSalCount monthSalobject = new MonthSalCount(rs.getInt("dd")+"",rs.getInt("mfache"));
 				jsArrayList.add(monthSalobject);
 
 			}
@@ -128,7 +140,7 @@ public class GetCrmData {
 
 
 	//当年每月发车量折线图
-	public String getYearMonthShipOut(String vehgo){
+	public String getYearMonthShipOut(String vehgo , String date){
 		ResultSet rs = null;
 		Statement stmt = null;
 		Connection conn = null;
@@ -141,13 +153,17 @@ public class GetCrmData {
 			if(vehgo.equals("out")){
 				sql ="select\tDATEPART(mm, t.new_outtime) as mm , count(*) as yfache\n" +
 						"from\tnew_vin_shipout t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(yy,t.new_outtime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type!=4 and datediff(yy,t.new_outtime,'" +
+						date +
+						"')=0 and pm.new_category=1\n" +
 						"group by DATEPART(mm, t.new_outtime)\n" +
 						"order by mm";
 			}else{
 				sql ="select\tDATEPART(mm, t.new_entrytime) as mm , count(*) as yfache\n" +
 						"from\tnew_vin_shipin t join new_vin_productmodel pm on t.new_vinmodelid = pm.new_vin_productmodelid\n" +
-						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(yy,t.new_entrytime,getdate())=0 and pm.new_category=1\n" +
+						"where\tt.new_formstatus=2 and t.statecode=0 and t.new_type=1 and datediff(yy,t.new_entrytime,'"+
+						date+
+						"')=0 and pm.new_category=1\n" +
 						"group by DATEPART(mm, t.new_entrytime)\n" +
 						"order by mm";
 			}

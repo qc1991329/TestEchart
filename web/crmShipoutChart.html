@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/mui.min.css">
     <!--App自定义的css-->
     <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <!--日期选择器css-->
+    <link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
     <style>
         .chart {
             height: 400px;
@@ -31,6 +33,7 @@
 <body>
 <div class="mui-content">
     <div class="mui-content-padded">
+        <button id='datebtn' class="btn mui-btn mui-btn-block">选择日期 ...</button>
         <h5 id="dayshipout" style="color:red;"></h5>
         <h5 id="modeldayshipout"></h5>
         <div class="chart" id="barChart"></div>
@@ -41,6 +44,7 @@
     </div>
 </div>
 <script src="js/mui.min.js"></script>
+<script src="js/mui.picker.min.js"></script>
 <script src="libs/echarts.js"></script>
 <script>
     var dayShipOuturl = 'dayShipOut';
@@ -52,10 +56,15 @@
     var year = date.getFullYear();
     var month = date.getMonth()+1;
     var datestring = getdatestring(date);
-    document.getElementById("dayshipout").innerHTML = datestring+"已发车："
-    document.getElementById("modeldayshipout").innerHTML = datestring+"发车型号统计："
-    document.getElementById("monthdayshipout").innerHTML =year+"年"+month+"月"+"每日发车量折线图："
-    document.getElementById("yearmonthshipout").innerHTML =year+"年每月发车量折线图："
+
+    var dayshipout = byId('dayshipout');
+    dayshipout.innerHTML = datestring+"已发车：";
+    var modeldayshipout = byId('modeldayshipout');
+    modeldayshipout.innerHTML = datestring+"发车型号统计：";
+    var monthdayshipout = byId('monthdayshipout');
+    monthdayshipout.innerHTML = year+"年"+month+"月"+"每日发车量折线图：";
+    var yearmonthshipout = byId('yearmonthshipout');
+    yearmonthshipout.innerHTML =year+"年每月发车量折线图：";
 
     //当日发车型号数据
     var yModel = [];
@@ -68,144 +77,190 @@
     var yMSalCount = [];
 
     mui.init();
-    mui.plusReady(function () {
-    });
 
     var barChart = echarts.init(byId('barChart'));
     var monthlineChart = echarts.init(byId('monthlineChart'));
     var yearlineChart = echarts.init(byId('yearlineChart'));
     var dayshipout = byId('dayshipout');
+    var datebtn = byId('datebtn');
 
-    barChart.showLoading();
-    monthlineChart.showLoading();
-    yearlineChart.showLoading();
+    getDayShipOut(datestring);
+    getDayModelSal(datestring);
+    getMonthSal(datestring);
+    getYearMonthShipOut(datestring);
+
+    //日期选择btn点击事件
+    datebtn.addEventListener('tap', function(){
+        var picker = new mui.DtPicker({
+            type: "date", //设置日历初始视图模式
+            beginDate: new Date(2015, 08), //设置开始日期
+            endDate: new Date(), //设置结束日期
+        });
+
+        picker.show(function(rs) {
+            var datestring = getdatestring(new Date(rs.text));
+            getDayShipOut(datestring);
+            getDayModelSal(datestring);
+            getMonthSal(datestring);
+            monthdayshipout.innerHTML = rs.y.text+"年"+rs.m.text+"月"+"每日发车量折线图：";
+            getYearMonthShipOut(datestring);
+            yearmonthshipout.innerHTML =rs.y.text+"年每月发车量折线图：";
+            datebtn.innerHTML = rs.text;
+            picker.dispose();
+        });
+    },false);
 
 
     //当日发车量
-    mui.ajax(dayShipOuturl, {
-        data: {
-            vehgo : 'out'
-        },
-        dataType: 'text',
-        timeout: 10000,
-        success: function (data) {
-            var old = dayshipout.innerHTML;
-            dayshipout.innerHTML = old+data;
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败!", function () {
-            });
-        }
-    });
+    function  getDayShipOut(date) {
+        mui.ajax(dayShipOuturl, {
+            data: {
+                vehgo : 'out',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                dayshipout.innerHTML = date + "发车量：" + data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败!", function () {
+                });
+            }
+        });
+    }
 
     //当日发车型号柱状图
-    mui.ajax(vehModelSalurl, {
-        data: {
-            vehgo : 'out'
-        },
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = data.length-1; i >=0 ; i--) {
-                yModel.push(data[i].modelName);
-                xSalCount.push(data[i].salCount);
+    function getDayModelSal(date) {
+        barChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                vehgo : 'out',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                modeldayshipout.innerHTML = date+"发车型号统计：";
+                //清空数组元素
+                yModel.splice(0,yModel.length);
+                xSalCount.splice(0,xSalCount.length);
+                for (var i = data.length-1; i >=0 ; i--) {
+                    yModel.push(data[i].modelName);
+                    xSalCount.push(data[i].salCount);
+                }
+                barChart.hideLoading();
+                barChart.setOption({
+                    calculable: true,
+                    legend: {
+                        data:['当日型号发车量']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'category',
+                            axisTick : {show: false},
+                            data : yModel
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '当日型号发车量',
+                            type: 'bar',
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true,
+                                        position: 'inside'
+                                    },
+                                    color: 'rgba(72,118,255,255)'
+                                }
+                            },
+                            data: xSalCount
+                        }
+                    ]
+                });
+            },
+            error: function (xhr, type, errorThrown) {
+                barChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
             }
-            barChart.hideLoading();
-            barChart.setOption({
-                calculable: true,
-                legend: {
-                    data:['今日型号发车量']
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis : [
-                    {
-                        type : 'value'
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'category',
-                        axisTick : {show: false},
-                        data : yModel
-                    }
-                ],
-                series : [
-                    {
-                        name: '今日型号发车量',
-                        type: 'bar',
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: true,
-                                    position: 'inside'
-                                },
-                                color: 'rgba(72,118,255,255)'
-                            }
-                        },
-                        data: xSalCount
-                    }
-                ]
-            });
-            /*barChart.on('click', function (params){
-                mui.toast(xProvince[params.dataIndex]+':'+params.value);
-            });*/
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败！", function () {
-            });
-        }
-    });
+        });
+    }
+
 
     //当月每日发车折线图
-    mui.ajax(vehMonthSalurl, {
-        data: {
-            vehgo : 'out'
-        },
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                xDay.push(data[i].month);
-                yDSalCount.push(data[i].salCount);
+    function getMonthSal(date) {
+        monthlineChart.showLoading();
+        mui.ajax(vehMonthSalurl, {
+            data: {
+                vehgo : 'out',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                xDay.splice(0,xDay.length);
+                yDSalCount.splice(0,yDSalCount.length);
+                for (var i = 0; i < data.length; i++) {
+                    xDay.push(data[i].month);
+                    yDSalCount.push(data[i].salCount);
+                }
+                monthlineChart.hideLoading();
+                monthlineChart.setOption(getOption('line', xDay, yDSalCount, '每日发车量'));
+            },
+            error: function (xhr, type, errorThrown) {
+                monthlineChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败!", function () {
+                });
             }
-            monthlineChart.hideLoading();
-            monthlineChart.setOption(getOption('line', xDay, yDSalCount, '每日发车量'));
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败!", function () {
-            });
-        }
-    });
+        });
+    }
+
 
     //当年每月发车折线图
-    mui.ajax(yearmonthShipOuturl, {
-        data: {
-            vehgo : 'out'
-        },
-        dataType: 'json',
-        timeout: 10000,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                xMonth.push(data[i].month);
-                yMSalCount.push(data[i].salCount);
+    function getYearMonthShipOut(date) {
+        yearlineChart.showLoading();
+        mui.ajax(yearmonthShipOuturl, {
+            data: {
+                vehgo : 'out',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                xMonth.splice(0,xMonth.length);
+                yMSalCount.splice(0,yMSalCount.length);
+                for (var i = 0; i < data.length; i++) {
+                    xMonth.push(data[i].month);
+                    yMSalCount.push(data[i].salCount);
+                }
+                yearlineChart.hideLoading();
+                yearlineChart.setOption(getOption('line', xMonth, yMSalCount, '每月发车量'));
+            },
+            error: function (xhr, type, errorThrown) {
+                yearlineChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败!", function () {
+                });
             }
-            yearlineChart.hideLoading();
-            yearlineChart.setOption(getOption('line', xMonth, yMSalCount, '每月发车量'));
-        },
-        error: function (xhr, type, errorThrown) {
-            //异常处理；
-            mui.alert(type, "失败!", function () {
-            });
-        }
-    });
+        });
+    }
+
 
 
     function getOption (chartType, xAxisData, seriesArr, title) {
@@ -266,7 +321,11 @@
                     calculable: true,
                     xAxis: [{
                         type: 'category',
-                        data: xAxisData
+                        data: xAxisData,
+                        axisLabel: {
+                            show:true,
+                            interval: 0
+                        }
                     }],
                     yAxis: [{
                         type: 'value',
@@ -302,7 +361,7 @@
         var y = date.getFullYear();
         var m = date.getMonth() + 1;
         var d = date.getDate();
-        return y+'年'+m+'月'+d+'日';
+        return y+'-'+m+'-'+d;
     }
 </script>
 </body>

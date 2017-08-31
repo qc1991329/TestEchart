@@ -18,7 +18,8 @@ public class VehMonthSalServlet extends HttpServlet {
 		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		String vehgo = request.getParameter("vehgo");
-		String json = new GetCrmData().getVehMonthSalCount(vehgo);
+		String date = request.getParameter("date");
+		String json = new GetCrmData().getVehMonthSalCount(vehgo,date);
 		out.print(json);
 		out.flush();
 		out.close();

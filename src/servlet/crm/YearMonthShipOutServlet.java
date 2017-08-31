@@ -22,8 +22,9 @@ public class YearMonthShipOutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json; charset=UTF-8");
         String vehgo = request.getParameter("vehgo");
+        String date = request.getParameter("date");
         PrintWriter out = response.getWriter();
-        String json = new GetCrmData().getYearMonthShipOut(vehgo);
+        String json = new GetCrmData().getYearMonthShipOut(vehgo,date);
         out.print(json);
         out.flush();
         out.close();

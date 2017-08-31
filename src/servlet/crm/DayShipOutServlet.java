@@ -20,8 +20,9 @@ public class DayShipOutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/plain; charset=UTF-8");
         String vehgo = request.getParameter("vehgo");
+        String date = request.getParameter("date");
         PrintWriter out = response.getWriter();
-        String str = new GetCrmData().getCrmShipout(vehgo);
+        String str = new GetCrmData().getCrmShipout(vehgo,date);
         out.print(str);
         out.flush();
         out.close();
