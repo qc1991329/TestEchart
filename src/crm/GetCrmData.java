@@ -126,7 +126,6 @@ public class GetCrmData {
 			while (rs.next()) {
 				MonthSalCount monthSalobject = new MonthSalCount(rs.getInt("dd")+"",rs.getInt("mfache"));
 				jsArrayList.add(monthSalobject);
-
 			}
 			String jsonstring = gson.toJson(jsArrayList);
 			return jsonstring;
