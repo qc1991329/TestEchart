@@ -1,0 +1,49 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="testChart">
+    <output-path>E:/Tomcat 8.5</output-path>
+    <root id="archive" name="testChart.war">
+      <element id="javaee-facet-resources" facet="TestEchart/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="TestEchart" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/taobao-sdk-java-auto_1455552377940-20160607.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/ojdbc6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/gson-2.3.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../libs/commons-logging.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/gson-2.3.1.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/ojdbc6.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/taobao-sdk-java-auto_1455552377940-20160607.jar" />
+          <element id="library" level="project" name="sqljdbc4" />
+          <element id="file-copy" path="$PROJECT_DIR$/../../json-lib-2.4-jdk15.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/aopalliance-1.0.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/async-http-client-1.9.32.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/client-sdk.api-1.0.2.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/client-sdk.common-1.0.0-SNAPSHOT.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/client-sdk.core-1.0.0-SNAPSHOT.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/client-sdk.example-1.0.0-SNAPSHOT.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/client-sdk.spring-1.0.0-SNAPSHOT.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/commons-codec-1.10.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/commons-io-2.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/commons-lang-2.4.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/commons-logging-1.1.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/fastjson-1.1.40.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/httpclient-4.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/httpcore-4.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/httpmime-4.3.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/java.servlet-2.5.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/json-lib-2.3-jdk15.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/log4j-1.2.17.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/netty-3.10.5.Final.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/servlet-api-2.5.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/slf4j-api-1.7.13.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/slf4j-log4j12-1.7.9.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/libs/sqljdbc4.jar" />
+        </element>
+        <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+    </root>
+  </artifact>
+</component>

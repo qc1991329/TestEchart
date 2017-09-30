@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>总装日报表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="css/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <!--日期选择器css-->
+    <link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+    <style>
+        .chart {
+            height: 400px;
+            width: 100%;
+        }
+
+        h5 {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        h5:first-child {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="mui-content">
+    <div class="mui-content-padded">
+        <button id='datebtn' class="btn mui-btn mui-btn-block">选择日期 ...</button>
+        <h5 id="monthout" style="color:red;"></h5>
+        <div class="chart" id="dayoutlineChart"></div>
+        <h5 id="monthin" style="color:red;"></h5>
+        <div class="chart" id="dayinlineChart"></div>
+        <h5 id="modeldayshipout" style="color:red;"></h5>
+        <div class="chart" id="barChart"></div>
+        <h5 id="pen" style="color:red;"></h5>
+        <div class="chart" id="pengbarChart"></div>
+        <h5 id="dayin" style="color:red;"></h5>
+        <div class="chart" id="dayinbarChart"></div>
+        <h5 id="dayout" style="color:red;"></h5>
+        <div class="chart" id="dayoutbarChart"></div>
+    </div>
+</div>
+<script src="js/mui.min.js"></script>
+<script src="js/mui.picker.min.js"></script>
+<script src="libs/echarts.js"></script>
+<script src="js/utiljs.js"></script>
+<script>
+    var vehModelSalurl = 'meszong';
+    //获取当前月份
+    var todate=new Date;
+    var year = todate.getFullYear();
+    var month = todate.getMonth()+1;
+    var day = todate.getDate();
+    var datestring = getdatestring(todate);
+
+    var monthout = byId('monthout');
+    monthout.innerHTML = year+'年'+month+"月总装下线车辆：";
+    var monthin = byId('monthin');
+    monthin.innerHTML = year+'年'+month+"月总装入库车辆：";
+    var modeldayshipout = byId('modeldayshipout');
+    modeldayshipout.innerHTML = year+'-'+month+'-'+day+"总装调试车辆：";
+    var pen = byId('pen');
+    pen.innerHTML = year+'-'+month+'-'+day+"总装喷漆车辆：";
+    var dayin = byId('dayin');
+    dayin.innerHTML = year+'-'+month+'-'+day+"总装入库车辆：";
+    var dayout = byId('dayout');
+    dayout.innerHTML = year+'-'+month+'-'+day+"总装下线车辆：";
+
+    //当日调试
+    var yModel = [];
+    var xSalCount = [];
+    //当日喷漆
+    var yPModel = [];
+    var xPenCount = [];
+    //当日入库
+    var yInModel = [];
+    var xInCount = [];
+    //当日下线
+    var yOutModel = [];
+    var xOutCount = [];
+    //当月每日下线数据
+    var xOutDay = [];
+    var yOutCount = [];
+    //当月每日入库数据
+    var xInDay = [];
+    var yInCount = [];
+
+    mui.init();
+
+    var barChart = echarts.init(byId('barChart'));
+    var pengbarChart = echarts.init(byId('pengbarChart'));
+    var dayinbarChart = echarts.init(byId('dayinbarChart'));
+    var dayoutbarChart = echarts.init(byId('dayoutbarChart'));
+    var dayoutlineChart = echarts.init(byId('dayoutlineChart'));
+    var dayinlineChart = echarts.init(byId('dayinlineChart'));
+    var datebtn = byId('datebtn');
+
+    getMonthout(datestring);
+    getMonthDayout(datestring);
+    getMonthin(datestring);
+    getMonthDayin(datestring);
+    getTiao(datestring);
+    getPen(datestring);
+    getDayin(datestring);
+    getDayout(datestring);
+
+    //日期选择btn点击事件
+    datebtn.addEventListener('tap', function(){
+        var picker = new mui.DtPicker({
+            type: "date", //设置日历初始视图模式
+            beginDate: new Date(2015, 08), //设置开始日期
+            endDate: new Date(), //设置结束日期
+        });
+
+        picker.show(function(rs) {
+            var datestring = getdatestring(new Date(rs.text));
+            year = new Date(rs.text).getFullYear();
+            month = new Date(rs.text).getMonth()+1;
+            day = new Date(rs.text).getDate();
+            datebtn.innerHTML = rs.text;
+            getMonthout(datestring);
+            getMonthDayout(datestring);
+            getMonthin(datestring);
+            getMonthDayin(datestring);
+            getTiao(datestring);
+            getPen(datestring);
+            getDayin(datestring);
+            getDayout(datestring);
+            picker.dispose();
+        });
+    },false);
+
+    //当月下线车辆
+    function getMonthout(date) {
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'monthout',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                monthout.innerHTML = year+'年'+month+"月总装下线车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+    }
+
+    //当月每日下线折线图
+    function getMonthDayout(date) {
+        dayoutlineChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'monthdayout',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                xOutDay.splice(0,xOutDay.length);
+                yOutCount.splice(0,yOutCount.length);
+                for (var i = 0; i < data.length; i++) {
+                    xOutDay.push(data[i].month);
+                    yOutCount.push(data[i].salCount);
+                }
+                dayoutlineChart.hideLoading();
+                dayoutlineChart.setOption(getOption('line', xOutDay, yOutCount, '每日下线量'));
+            },
+            error: function (xhr, type, errorThrown) {
+                monthlineChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败!", function () {
+                });
+            }
+        });
+    }
+
+    //当月每日入库线图
+    function getMonthDayin(date) {
+        dayinlineChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'montdayhin',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                xInDay.splice(0,xInDay.length);
+                yInCount.splice(0,yInCount.length);
+                for (var i = 0; i < data.length; i++) {
+                    xInDay.push(data[i].month);
+                    yInCount.push(data[i].salCount);
+                }
+                dayinlineChart.hideLoading();
+                dayinlineChart.setOption(getOption('line', xInDay, yInCount, '每日入库量'));
+            },
+            error: function (xhr, type, errorThrown) {
+                monthlineChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败!", function () {
+                });
+            }
+        });
+    }
+
+    //当月入库车辆
+    function getMonthin(date) {
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'monthin',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                monthin.innerHTML = year+'年'+month+"月总装入库车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+    }
+
+    //当日调试
+    function getTiao(date) {
+        barChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'tiao',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                //清空数组元素
+                yModel.splice(0,yModel.length);
+                xSalCount.splice(0,xSalCount.length);
+                for (var i = data.length-1; i >=0 ; i--) {
+                    yModel.push(data[i].modelName);
+                    xSalCount.push(data[i].salCount);
+                }
+                barChart.hideLoading();
+                barChart.setOption(getOption('bar', yModel, xSalCount, '总装当日调试车辆'));
+            },
+            error: function (xhr, type, errorThrown) {
+                barChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'tiaocount',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                modeldayshipout.innerHTML = year+'-'+month+'-'+day+"总装调试车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+
+    }
+
+    //当日喷漆
+    function getPen(date) {
+        pengbarChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'pen',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                yPModel.splice(0,yPModel.length);
+                xPenCount.splice(0,xPenCount.length);
+                for (var i = data.length-1; i >=0 ; i--) {
+                    yPModel.push(data[i].modelName);
+                    xPenCount.push(data[i].salCount);
+                }
+                pengbarChart.hideLoading();
+                pengbarChart.setOption(getOption('bar', yPModel, xPenCount, '总装当日喷漆车辆'));
+            },
+            error: function (xhr, type, errorThrown) {
+                pengbarChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'pencount',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                pen.innerHTML = year+'-'+month+'-'+day+"总装喷漆车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+    }
+
+    //当日入库
+    function getDayin(date) {
+        dayinbarChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'dayin',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                yInModel.splice(0,yInModel.length);
+                xInCount.splice(0,xInCount.length);
+                for (var i = data.length-1; i >=0 ; i--) {
+                    yInModel.push(data[i].modelName);
+                    xInCount.push(data[i].salCount);
+                }
+                dayinbarChart.hideLoading();
+                dayinbarChart.setOption(getOption('bar', yInModel, xInCount, '总装当日入库车辆'));
+            },
+            error: function (xhr, type, errorThrown) {
+                dayinbarChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'incount',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                dayin.innerHTML = year+'-'+month+'-'+day+"总装入库车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+    }
+
+    //当日下线
+    function getDayout(date) {
+        dayoutbarChart.showLoading();
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'dayout',
+                date : date
+            },
+            dataType: 'json',
+            timeout: 10000,
+            success: function (data) {
+                yOutModel.splice(0,yOutModel.length);
+                xOutCount.splice(0,xOutCount.length);
+                for (var i = data.length-1; i >=0 ; i--) {
+                    yOutModel.push(data[i].modelName);
+                    xOutCount.push(data[i].salCount);
+                }
+                dayoutbarChart.hideLoading();
+                dayoutbarChart.setOption(getOption('bar', yOutModel, xOutCount, '总装当日下线车辆'));
+            },
+            error: function (xhr, type, errorThrown) {
+                dayoutbarChart.hideLoading();
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+
+        mui.ajax(vehModelSalurl, {
+            data: {
+                progress : 'outcount',
+                date : date
+            },
+            dataType: 'text',
+            timeout: 10000,
+            success: function (data) {
+                dayout.innerHTML = year+'-'+month+'-'+day+"总装下线车辆："+data;
+            },
+            error: function (xhr, type, errorThrown) {
+                //异常处理；
+                mui.alert(type, "失败！", function () {
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>
