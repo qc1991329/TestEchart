@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 /**
  * Created by Administrator on 2016-12-15.
+ * CRM数据库连接
  */
 public  class CRMConnect {
     //集团内网CRM数据库

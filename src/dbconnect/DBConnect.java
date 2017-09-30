@@ -29,7 +29,7 @@ public class DBConnect {
 		Gson gson = new Gson();
 		ArrayList<Vehtotal> veList  =  new ArrayList<Vehtotal>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl =
 					"select at_province,total from (select t.at_province,sum(t.at_total) as total from AREA_VEHICLE_TOTAL t where t.at_year = 2017 and t.at_province is not null  group by t.at_province order by total DESC) where rownum<=10";
@@ -59,7 +59,7 @@ public class DBConnect {
 		Gson gson = new Gson();
 		ArrayList<VehModelCount> veList  =  new ArrayList<VehModelCount>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sql =
 					"select vmi_name ,salcount from (select  m.vmi_id ,m.vmi_name,count(*) as salcount from vehicle_info t join vehicle_model_info m on t.vi_model = m.vmi_id\n" +
@@ -90,7 +90,7 @@ public class DBConnect {
 		Gson gson = new Gson();
 		ArrayList<WorkingRate> veList  =  new ArrayList<WorkingRate>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl = "WITH TEMP AS\n" +
 					" (SELECT OOD_PROVINCE AS REGION,\n" +
@@ -151,7 +151,7 @@ public class DBConnect {
 		Gson gson = new Gson();
 		ArrayList<MonthSalCount> jsArrayList = new ArrayList<MonthSalCount>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sql =
 					"select to_number(mon) as mon, sum(salcount) as salcount  \n" +
@@ -187,7 +187,7 @@ public class DBConnect {
 		String strMonth = month>=10?month+"":"0"+month;
 		ArrayList<VehWorkingRate> jsArrayList = new ArrayList<VehWorkingRate>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sqlvehtotsl =
 					"WITH TEMP AS\n" +
@@ -250,7 +250,7 @@ public class DBConnect {
 		Gson gson = new Gson();
 		ArrayList<VehModelOverload> jsArrayList = new ArrayList<VehModelOverload>();
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sql ="select * from \n" +
 					"(select m.vmi_name,trunc(sum(p.woa_hours),2) totalhours ,count(distinct p.woa_vin_code) vehcount \n" +
@@ -286,7 +286,7 @@ public class DBConnect {
 		int count = 0;
 		String date = Util.dateToStr(new Date());
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sql ="select count(*) coun from VEHICLE_QC_INFO t where t.vqi_time > to_date('" + date + "','yyyy-mm-dd')";
 			rs = stmt.executeQuery(sql);
@@ -311,7 +311,7 @@ public class DBConnect {
 		int count = 0;
 		String date = Util.dateToStr(new Date());
 		try {
-			conn = GetConnect.getconnect();
+			conn = IOTConnect.getconnect();
 			stmt = conn.createStatement();
 			String sql ="select count(*) coun from CP_STORE_STOCK t where  t.in_date > to_date('" + date + "','yyyy-mm-dd')";
 			rs = stmt.executeQuery(sql);

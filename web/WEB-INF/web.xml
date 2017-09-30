@@ -44,9 +44,22 @@
         <servlet-name>crmPaymentServlet</servlet-name>
         <servlet-class>servlet.crm.CrmPaymentServlet</servlet-class>
     </servlet>
-
-
-
+    <servlet>
+        <servlet-name>getDingConfigServlet</servlet-name>
+        <servlet-class>servlet.GetDingConfigServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getUserInfoServlet</servlet-name>
+        <servlet-class>servlet.GetUserInfoServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>mesZongServlet</servlet-name>
+        <servlet-class>servlet.mes.MesZongServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>mesDipanServlet</servlet-name>
+        <servlet-class>servlet.mes.MesDipanServlet</servlet-class>
+    </servlet>
 
 
     <servlet-mapping>
@@ -84,5 +97,21 @@
     <servlet-mapping>
         <servlet-name>crmPaymentServlet</servlet-name>
         <url-pattern>/crmpayment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getDingConfigServlet</servlet-name>
+        <url-pattern>/getdingconfig</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getUserInfoServlet</servlet-name>
+        <url-pattern>/getuserinfo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mesZongServlet</servlet-name>
+        <url-pattern>/meszong</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mesDipanServlet</servlet-name>
+        <url-pattern>/mesdipan</url-pattern>
     </servlet-mapping>
 </web-app>

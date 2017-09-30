@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class GetCrmData {
 
-	//当日发车量
+	//当日发车量(出入库)
 	public String getCrmShipout( String vehgo , String date) {
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -50,7 +50,7 @@ public class GetCrmData {
 		}
 	}
 
-	//当日型号发车量统计
+	//当日型号发车量统计(出入库)
 	public String getVehModelSalCount(String vehgo , String date) {
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -94,7 +94,7 @@ public class GetCrmData {
 		}
 	}
 
-	//当月每日发车量折线图
+	//当月每日发车量折线图(出入库)
 	public String getVehMonthSalCount(String vehgo , String date){
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -138,7 +138,7 @@ public class GetCrmData {
 	}
 
 
-	//当年每月发车量折线图
+	//当年每月发车量折线图(出入库)
 	public String getYearMonthShipOut(String vehgo , String date){
 		ResultSet rs = null;
 		Statement stmt = null;
